@@ -525,19 +525,23 @@
           (puthash filename buffer go-direx--buffer-cache)
           buffer)))))
 
+
+(defun go-direx--make-buffer-common (func)
+  (let ((buf (go-direx--make-buffer)))
+    (funcall func buf)
+    (set (make-local-variable 'direx:leaf-icon) " ")
+    (add-hook 'kill-buffer-hook 'go-direx--kill-buffer-hook nil t)
+    (direx:expand-item-recursively)))
+
 ;;;###autoload
 (defun go-direx-pop-to-buffer ()
   (interactive)
-  (pop-to-buffer (go-direx--make-buffer))
-  (set (make-local-variable 'direx:leaf-icon) " ")
-  (direx:expand-item-recursively))
+  (go-direx--make-buffer-common 'pop-to-buffer))
 
 ;;;###autoload
 (defun go-direx-switch-to-buffer ()
   (interactive)
-  (switch-to-buffer (go-direx--make-buffer))
-  (set (make-local-variable 'direx:leaf-icon) " ")
-  (direx:expand-item-recursively))
+  (go-direx--make-buffer-common 'switch-to-buffer))
 
 (provide 'go-direx)
 
