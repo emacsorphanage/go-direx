@@ -516,15 +516,19 @@
   (oset module :file-name (buffer-file-name)))
 
 (defun go-direx--make-buffer ()
-  (let ((filename (buffer-file-name)))
-    (direx:aif (gethash filename go-direx--buffer-cache)
-        it
+  (let* ((filename (buffer-file-name))
+         (cached-buf (gethash filename go-direx--buffer-cache)))
+    (if (and cached-buf (buffer-live-p cached-buf))
+        cached-buf
       (let ((module (go-direx--collect-info)))
         (go-direx--set-buffer-info module)
         (let ((buffer (direx:ensure-buffer-for-root module)))
           (puthash filename buffer go-direx--buffer-cache)
           buffer)))))
 
+(defun go-direx--kill-buffer-hook ()
+  (let ((file (buffer-file-name)))
+    (remhash file go-direx--buffer-cache)))
 
 (defun go-direx--make-buffer-common (func)
   (let ((buf (go-direx--make-buffer)))
