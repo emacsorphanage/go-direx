@@ -82,60 +82,49 @@
   ((leaves :initarg :leaves :initform '())))
 
 (defclass go-direx-import (go-direx-object direx:leaf)
-  ((line :initarg :line))
-  "imported package")
+  ((line :initarg :line)))
 
 (defclass go-direx-symbol (go-direx-object)
   ((line :initarg :line)
    (access :initarg :access)))
 
 (defclass go-direx-variable (go-direx-symbol direx:leaf)
-  ()
-  "Variable(XXX Type ??)")
+  ())
 
 (defclass go-direx-constant (go-direx-symbol direx:leaf)
-  ((type :initarg :type))
-  "constants")
+  ((type :initarg :type)))
 
 (defclass go-direx-field (go-direx-symbol direx:leaf)
   ((type :initarg :type)
-   (belonging :initarg :belonging))
-  "field of struct")
+   (belonging :initarg :belonging)))
 
 (defclass go-direx-function (go-direx-symbol direx:leaf)
   ((signature :initarg :signature)
-   (return-type :initarg :return-type))
-  "functions")
+   (return-type :initarg :return-type)))
 
 (defclass go-direx-method (go-direx-function)
-  ((belonging :initarg :belonging))
-  "methods")
+  ((belonging :initarg :belonging)))
 
 (defclass go-direx-belonged ()
   ((name :initarg :name)
-   (class :initarg :class))
-  "methods")
+   (class :initarg :class)))
 
 (defclass go-direx-type (go-direx-symbol)
-  ((type :initarg :type))
-  "Type")
+  ((type :initarg :type)))
 
 (defclass go-direx-embedded (go-direx-type direx:leaf)
-  ((belonging :initarg :belonging))
-  "Type")
+  ((belonging :initarg :belonging)))
 
 (defclass go-direx-interface (go-direx-type)
   ((class-name :initarg :class-name)
    (methods :initarg :methods :initform '())
-   (embeddeds :initarg :embeddeds :initform '()))
-  "interface")
+   (embeddeds :initarg :embeddeds :initform '())))
 
 (defclass go-direx-struct (go-direx-type)
   ((class-name :initarg :class-name)
    (fields :initarg :fields :initform '())
    (methods :initarg :methods :initform '())
-   (embeddeds :initarg :embeddeds :initform '()))
-  "structs")
+   (embeddeds :initarg :embeddeds :initform '())))
 
 (defclass go-direx-struct-node (go-direx-node)
   ((struct :initarg :struct)))
