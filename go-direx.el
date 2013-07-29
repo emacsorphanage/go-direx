@@ -256,10 +256,20 @@
       (concat name signature " " "(" ret-type ")")
     (concat name signature " " ret-type)))
 
+(defun go-direx--retrieve-function-signature (last2 last1)
+  (if (string-match-p "\\`signature:" last1)
+      (cons (go-direx--retrieve-signature last1) "")
+    (if (string-match-p "\\`signature:" last2)
+        (cons (go-direx--retrieve-signature last2)
+              (go-direx--retrieve-type last1))
+      (error "Invalid: signature type"))))
+
 (defun go-direx--make-function (name line access fields)
   (let* ((len (length fields))
-         (signature (go-direx--retrieve-signature (nth (- len 2) fields)))
-         (ret-type (go-direx--retrieve-type (nth (1- len) fields))))
+         (signature-ret (go-direx--retrieve-function-signature
+                         (nth (- len 2) fields) (nth (1- len) fields)))
+         (signature (car signature-ret))
+         (ret-type (cdr signature-ret)))
     (make-instance 'go-direx-function
                    :name (go-direx--make-function-name name signature ret-type)
                    :line line :access access
