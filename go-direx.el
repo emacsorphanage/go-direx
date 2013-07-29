@@ -44,6 +44,11 @@
   "Face of header"
   :group 'go-direx)
 
+(defface go-direx-package
+  '((t (:foreground "green" :weight bold)))
+  "Face of type"
+  :group 'go-direx)
+
 (defface go-direx-label
   '((t :inherit font-lock-function-name-face))
   "Face of type"
@@ -56,7 +61,8 @@
 (defclass go-direx-object (direx:tree) ())
 
 (defclass go-direx-module (go-direx-object direx:node)
-  ((buffer :initarg :buffer)
+  ((package :initarg :package)
+   (buffer :initarg :buffer)
    (file-name :initarg :file-name :accessor direx:file-full-name)
 
    (imports :initarg :imports)
@@ -69,6 +75,7 @@
    (interfaces :initarg :interfaces :initform '()))
   "module class")
 
+(defclass go-direx-package (go-direx-object direx:leaf) ())
 (defclass go-direx-label (go-direx-object direx:leaf) ())
 
 (defvar go-direx-field-label
@@ -145,7 +152,8 @@
                                :interface interface)))
 
 (defmethod direx:node-children ((module go-direx-module))
-  (append (list (oref module :imports)
+  (append (list (oref module :package)
+                (oref module :imports)
                 (oref module :constants)
                 (oref module :variables)
                 (oref module :functions))
@@ -327,8 +335,8 @@
          (access (go-direx--retrieve-access (nth 4 fields))))
     (case short
       ;; package name
-      (?p (cons 'package name))
-
+      (?p (cons 'package (make-instance 'go-direx-package
+                                        :name (concat "package " name))))
       ;; imported package
       (?i (cons 'import (make-instance 'go-direx-import :name name :line line)))
       ;; constant variable
@@ -443,7 +451,7 @@
                  (type (car stuff))
                  (instance (cdr stuff)))
             (case type
-              (package (oset module :name (concat "package: " instance)))
+              (package (oset module :package instance))
               (embedded (push instance embeddeds))
               (method (push instance methods))
               (field (push instance fields))
@@ -485,6 +493,11 @@
     (oset item :face 'go-direx-header)
     item))
 
+(defmethod direx:make-item ((tree go-direx-package) parent)
+  (let ((item (call-next-method)))
+    (oset item :face 'go-direx-package)
+    item))
+
 (defmethod direx:make-item ((tree go-direx-label) parent)
   (let ((item (call-next-method)))
     (oset item :face 'go-direx-label)
@@ -522,6 +535,7 @@
   (make-hash-table :test 'equal))
 
 (defsubst go-direx--set-buffer-info (module)
+  (oset module :name (format "*go-jedi:%s*" (buffer-name)))
   (oset module :buffer (current-buffer))
   (oset module :file-name (buffer-file-name)))
 
