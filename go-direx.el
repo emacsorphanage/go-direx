@@ -535,7 +535,7 @@
   (make-hash-table :test 'equal))
 
 (defsubst go-direx--set-buffer-info (module)
-  (oset module :name (format "*go-jedi:%s*" (buffer-name)))
+  (oset module :name (format "*go-direx:%s*" (buffer-name)))
   (oset module :buffer (current-buffer))
   (oset module :file-name (buffer-file-name)))
 
