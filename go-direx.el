@@ -527,6 +527,21 @@
     (with-selected-window (display-buffer (find-file-noselect filename))
       (go-direx--goto-item item))))
 
+(defmethod go-direx--update-module-info ((module go-direx-module) updated)
+  (dolist (slot '(:imports :constants :types :variables :functions))
+    (eieio-oset module slot (eieio-oref updated slot))))
+
+(defmethod direx:item-refresh ((item go-direx-item))
+  (let* ((root (direx:item-root item))
+         (module (direx:item-tree root)))
+    (with-current-buffer (oref module :buffer)
+      (let ((updated (go-direx--collect-info)))
+        (go-direx--update-module-info module updated)))
+    (call-next-method root)
+    (save-excursion
+      (goto-char (point-min))
+      (direx:expand-item-recursively))))
+
 
 
 ;;; Command
