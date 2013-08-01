@@ -45,7 +45,8 @@
   :group 'go-direx)
 
 (defface go-direx-package
-  '((t (:foreground "green" :weight bold)))
+  '((((background dark))  :foreground "green" :weight bold)
+    (((background light)) :foreground "red" :weight bold))
   "Face of type"
   :group 'go-direx)
 
