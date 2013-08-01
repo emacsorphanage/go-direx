@@ -29,7 +29,7 @@ And you can install `gotags` by `go get` as below.
 (define-key go-mode-map (kbd "C-c C-j") 'go-direx-pop-to-buffer)
 ```
 
-### working with [popwin](https://github.com/m2ym/popwin-el)
+### Working with [popwin](https://github.com/m2ym/popwin-el)
 
 ```elisp
 (require 'popwin)
@@ -37,5 +37,14 @@ And you can install `gotags` by `go get` as below.
 (setq display-buffer-function 'popwin:display-buffer)
 
 (push '(direx:direx-mode :position left :width 0.4 :dedicated t :stick t)
+      popwin:special-display-config)
+```
+
+#### Show buffer on right side
+
+![go-direx2](image/go-direx-rightside.png)
+
+```elisp
+(push '(direx:direx-mode :position right :width 0.4 :dedicated t :stick t)
       popwin:special-display-config)
 ```
