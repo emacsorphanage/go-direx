@@ -36,7 +36,7 @@ And you can install `gotags` by `go get` as below.
 (defvar popwin:special-display-config-backup popwin:special-display-config)
 (setq display-buffer-function 'popwin:display-buffer)
 
-(push '(direx:direx-mode :position left :width 0.4 :dedicated t :stick t)
+(push '("^\*go-direx:" :regexp t :position left :width 0.4 :dedicated t :stick t)
       popwin:special-display-config)
 ```
 
@@ -45,6 +45,6 @@ And you can install `gotags` by `go get` as below.
 ![go-direx2](image/go-direx-rightside.png)
 
 ```elisp
-(push '(direx:direx-mode :position right :width 0.4 :dedicated t :stick t)
+(push '("^\*go-direx:" :regexp t :position right :width 0.4 :dedicated t :stick t)
       popwin:special-display-config)
 ```
