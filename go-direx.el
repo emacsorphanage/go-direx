@@ -185,6 +185,8 @@
   (let ((interface (oref node :interface)))
     (oref interface :methods)))
 
+
+
 ;;; Parsing
 
 (defun go-direx--retrieve-signature (str)
@@ -239,8 +241,6 @@
       (cond ((string= access "public") 'public)
             ((string= access "private") 'private)
             (t (error "Error: Invalid access '%s'" access))))))
-
-
 
 (defun go-direx--concat-name-and-type (name type)
   (if (string= type "")
@@ -325,8 +325,6 @@
                    :name name
                    :line line :access access :type name
                    :belonging belonging)))
-
-
 
 (defun go-direx--classify (line-str)
   (let* ((fields (split-string line-str "\t"))
@@ -594,4 +592,4 @@
 ;; indent-tabs-mode: nil
 ;; End:
 
-;;;;; go-direx.el ends here
+;;; go-direx.el ends here
