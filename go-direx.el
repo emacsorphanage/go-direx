@@ -1,11 +1,11 @@
 ;;; go-direx.el --- Tree style source code viewer for Go language
 
-;; Copyright (C) 2013 by Syohei YOSHIDA
+;; Copyright (C) 2014 by Syohei YOSHIDA
 
 ;; Author: Syohei YOSHIDA <syohex@gmail.com>
 ;; URL: https://github.com/syohex/emacs-go-direx
 ;; Version: 0.01
-;; Package-Requires: ((direx "0.1alpha"))
+;; Package-Requires: ((direx "0.1alpha") (cl-lib "0.5"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -34,8 +34,7 @@
 
 ;;; Code:
 
-(eval-when-compile
-  (require 'cl))
+(require 'cl-lib)
 
 (require 'direx)
 
@@ -151,16 +150,16 @@
   ((interface :initarg :interface)))
 
 (defsubst go-direx--construct-struct-nodes (module)
-  (loop for struct in (oref module :structs)
-        collect (make-instance 'go-direx-struct-node
-                               :name (oref struct :name)
-                               :struct struct)))
+  (cl-loop for struct in (oref module :structs)
+           collect (make-instance 'go-direx-struct-node
+                                  :name (oref struct :name)
+                                  :struct struct)))
 
 (defsubst go-direx--construct-interface-nodes (module)
-  (loop for interface in (oref module :interfaces)
-        collect (make-instance 'go-direx-interface-node
-                               :name (oref interface :name)
-                               :interface interface)))
+  (cl-loop for interface in (oref module :interfaces)
+           collect (make-instance 'go-direx-interface-node
+                                  :name (oref interface :name)
+                                  :interface interface)))
 
 (defmethod direx:node-children ((module go-direx-module))
   (append (list (oref module :package)
@@ -215,19 +214,19 @@
   (let ((ret-hash (make-hash-table))
         (struct-hash (make-hash-table :test 'equal))
         (interface-hash (make-hash-table :test 'equal)))
-    (loop for class in classes
-          for type = (oref class :type)
-          when (string= "struct" type)
-          do (puthash (oref class :class-name) class struct-hash)
+    (cl-loop for class in classes
+             for type = (oref class :type)
+             when (string= "struct" type)
+             do (puthash (oref class :class-name) class struct-hash)
 
-          when (string= "interface" type)
-          do (puthash (oref class :class-name) class interface-hash)
+             when (string= "interface" type)
+             do (puthash (oref class :class-name) class interface-hash)
 
-          finally
-          return (progn
-                   (puthash 'struct struct-hash ret-hash)
-                   (puthash 'interface interface-hash ret-hash)
-                   ret-hash))))
+             finally
+             return (progn
+                      (puthash 'struct struct-hash ret-hash)
+                      (puthash 'interface interface-hash ret-hash)
+                      ret-hash))))
 
 (defun go-direx--retrieve-line (str)
   (when (string-match "\\`\\([0-9]+\\);\"\\'" str)
@@ -342,7 +341,7 @@
          (line (go-direx--retrieve-line (nth 2 fields)))
          (short (string-to-char (nth 3 fields)))
          (access (go-direx--retrieve-access (nth 4 fields))))
-    (case short
+    (cl-case short
       ;; package name
       (?p (cons 'package (make-instance 'go-direx-package
                                         :name (concat "package " name))))
@@ -396,44 +395,44 @@
                      :class-name name))))
 
 (defmethod go-direx--set-methods ((module go-direx-module) methods belonged-hash)
-  (loop for method in methods
-        for method-belonged = (oref method :belonging)
-        for belonged-type = (oref method-belonged :class)
-        for hash = (gethash belonged-type belonged-hash)
-        for class-name = (oref method-belonged :name)
-        for belonged-class = (gethash class-name hash)
-        do
-        (if belonged-class
-            (go-direx--push-slot belonged-class :methods method)
-          (let ((class (go-direx--define-class belonged-type class-name)))
-            (go-direx--push-slot class :methods method)
-            (go-direx--add-to-node module 'type class)
-            (puthash class-name class hash)))))
+  (cl-loop for method in methods
+           for method-belonged = (oref method :belonging)
+           for belonged-type = (oref method-belonged :class)
+           for hash = (gethash belonged-type belonged-hash)
+           for class-name = (oref method-belonged :name)
+           for belonged-class = (gethash class-name hash)
+           do
+           (if belonged-class
+               (go-direx--push-slot belonged-class :methods method)
+             (let ((class (go-direx--define-class belonged-type class-name)))
+               (go-direx--push-slot class :methods method)
+               (go-direx--add-to-node module 'type class)
+               (puthash class-name class hash)))))
 
 (defmethod go-direx--set-fields ((module go-direx-module) fields belonged-hash)
-  (loop for field in fields
-        for field-belonged = (oref field :belonging)
-        for belonged-type = (oref field-belonged :class)
-        for hash = (gethash belonged-type belonged-hash)
-        for belonged-class = (gethash (oref field-belonged :name) hash)
-        do
-        (go-direx--push-slot belonged-class :fields field)))
+  (cl-loop for field in fields
+           for field-belonged = (oref field :belonging)
+           for belonged-type = (oref field-belonged :class)
+           for hash = (gethash belonged-type belonged-hash)
+           for belonged-class = (gethash (oref field-belonged :name) hash)
+           do
+           (go-direx--push-slot belonged-class :fields field)))
 
 (defmethod go-direx--set-embeddeds ((module go-direx-module) embeddeds belonged-hash)
-  (loop for embedded in embeddeds
-        for embedded-belonged = (oref embedded :belonging)
-        for belonged-type = (oref embedded-belonged :class)
-        for hash = (gethash belonged-type belonged-hash)
-        for belonged-class = (gethash (oref embedded-belonged :name) hash)
-        do
-        (go-direx--push-slot belonged-class :embeddeds embedded)))
+  (cl-loop for embedded in embeddeds
+           for embedded-belonged = (oref embedded :belonging)
+           for belonged-type = (oref embedded-belonged :class)
+           for hash = (gethash belonged-type belonged-hash)
+           for belonged-class = (gethash (oref embedded-belonged :name) hash)
+           do
+           (go-direx--push-slot belonged-class :embeddeds embedded)))
 
 (defmethod go-direx--set-struct-interface ((module go-direx-module))
-  (loop for type in (oref (oref module :types) :leaves)
-        do
-        (typecase type
-          (go-direx-struct (go-direx--push-slot module :structs type))
-          (go-direx-interface (go-direx--push-slot module :interfaces type)))))
+  (cl-loop for type in (oref (oref module :types) :leaves)
+           do
+           (cl-typecase type
+             (go-direx-struct (go-direx--push-slot module :structs type))
+             (go-direx-interface (go-direx--push-slot module :interfaces type)))))
 
 (defmacro go-direx--make-node (name)
   `(make-instance 'go-direx-node :name ,name))
@@ -459,7 +458,7 @@
           (let* ((stuff (go-direx--classify line))
                  (type (car stuff))
                  (instance (cdr stuff)))
-            (case type
+            (cl-case type
               (package (oset module :package instance))
               (embedded (push instance embeddeds))
               (method (push instance methods))
