@@ -24,14 +24,14 @@ And you can install `gotags` by `go get` as below.
 
 ## Setup
 
-```elisp
+```lisp
 (require 'go-direx) ;; Don't need to require, if you install by package.el
 (define-key go-mode-map (kbd "C-c C-j") 'go-direx-pop-to-buffer)
 ```
 
 ### Working with [popwin](https://github.com/m2ym/popwin-el)
 
-```elisp
+```lisp
 (require 'popwin)
 (defvar popwin:special-display-config-backup popwin:special-display-config)
 (setq display-buffer-function 'popwin:display-buffer)
@@ -44,7 +44,7 @@ And you can install `gotags` by `go get` as below.
 
 ![go-direx2](image/go-direx-rightside.png)
 
-```elisp
+```lisp
 (push '("^\*go-direx:" :regexp t :position right :width 0.4 :dedicated t :stick t)
       popwin:special-display-config)
 ```
