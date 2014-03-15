@@ -18,7 +18,7 @@ You can install `direx` with package.el from MELPA.
 And you can install `gotags` by `go get` as below.
 
 ```
-% go get -u github.com/nsf/gotags
+% go get -u github.com/jstemmer/gotags
 ```
 
 
