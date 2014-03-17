@@ -33,7 +33,6 @@ And you can install `gotags` by `go get` as below.
 
 ```lisp
 (require 'popwin)
-(defvar popwin:special-display-config-backup popwin:special-display-config)
 (setq display-buffer-function 'popwin:display-buffer)
 
 (push '("^\*go-direx:" :regexp t :position left :width 0.4 :dedicated t :stick t)
