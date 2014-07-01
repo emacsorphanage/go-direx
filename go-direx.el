@@ -35,7 +35,6 @@
 ;;; Code:
 
 (require 'cl-lib)
-
 (require 'direx)
 
 (defgroup go-direx nil
@@ -319,17 +318,15 @@
   (let* ((belonging (go-direx--retrieve-belonging
                      (go-direx--search-belonging-field line-str)))
          (signature (go-direx--retrieve-signature (nth 7 fields)))
-         (ret-type (go-direx--retrieve-type (nth 8 fields)))
-         (type (go-direx--retrieve-type (nth 6 fields))))
+         (ret-type (go-direx--retrieve-type (nth 8 fields))))
     (make-instance 'go-direx-method
                    :name (go-direx--make-function-name name signature ret-type)
                    :line line :access access :signature signature :return-type
                    ret-type :belonging belonging)))
 
-(defun go-direx--make-embedded (name line access line-str fields)
+(defun go-direx--make-embedded (name line access line-str)
   (let ((belonging (go-direx--retrieve-belonging
-                    (go-direx--search-belonging-field line-str)))
-        (type (go-direx--retrieve-type (nth 5 fields))))
+                    (go-direx--search-belonging-field line-str))))
     (make-instance 'go-direx-embedded
                    :name name
                    :line line :access access :type name
@@ -366,8 +363,7 @@
       (?m (cons 'method (go-direx--make-method name line access line-str fields)))
 
       ;; embedded types
-      (?e (cons 'embedded (go-direx--make-embedded
-                           name line access line-str fields))))))
+      (?e (cons 'embedded (go-direx--make-embedded name line access line-str))))))
 
 (defmethod go-direx--add-to-node ((module go-direx-module) type instance)
   (let* ((slot (intern (format ":%ss" type)))
@@ -409,7 +405,7 @@
                (go-direx--add-to-node module 'type class)
                (puthash class-name class hash)))))
 
-(defmethod go-direx--set-fields ((module go-direx-module) fields belonged-hash)
+(defmethod go-direx--set-fields ((_module go-direx-module) fields belonged-hash)
   (cl-loop for field in fields
            for field-belonged = (oref field :belonging)
            for belonged-type = (oref field-belonged :class)
@@ -418,7 +414,7 @@
            do
            (go-direx--push-slot belonged-class :fields field)))
 
-(defmethod go-direx--set-embeddeds ((module go-direx-module) embeddeds belonged-hash)
+(defmethod go-direx--set-embeddeds ((_module go-direx-module) embeddeds belonged-hash)
   (cl-loop for embedded in embeddeds
            for embedded-belonged = (oref embedded :belonging)
            for belonged-type = (oref embedded-belonged :class)
@@ -480,11 +476,10 @@
     (if (not file)
         (message "This buffer is not related file!!")
       (with-temp-buffer
-        (let ((cmd (format "gotags %s" file)))
-          (if (not (zerop (call-process-shell-command cmd nil t)))
-              (message "Failed: %s" cmd)
-            (goto-char (point-min))
-            (go-direx--parse-gotags-output)))))))
+        (if (not (zerop (call-process "gotags" nil t nil file)))
+            (message "Failed: 'gotags %s'" file)
+          (goto-char (point-min))
+          (go-direx--parse-gotags-output))))))
 
 
 
@@ -496,17 +491,17 @@
 (defmethod direx:make-item ((tree go-direx-object) parent)
   (make-instance 'go-direx-item :tree tree :parent parent))
 
-(defmethod direx:make-item ((tree go-direx-node) parent)
+(defmethod direx:make-item ((_tree go-direx-node) _parent)
   (let ((item (call-next-method)))
     (oset item :face 'go-direx-header)
     item))
 
-(defmethod direx:make-item ((tree go-direx-package) parent)
+(defmethod direx:make-item ((_tree go-direx-package) _parent)
   (let ((item (call-next-method)))
     (oset item :face 'go-direx-package)
     item))
 
-(defmethod direx:make-item ((tree go-direx-label) parent)
+(defmethod direx:make-item ((_tree go-direx-label) _parent)
   (let ((item (call-next-method)))
     (oset item :face 'go-direx-label)
     item))
