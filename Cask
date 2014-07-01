@@ -1,7 +1,7 @@
 (source gnu)
 (source melpa)
 
-(package "go-direx" "0.02" "Tree style source code viewer for Go language")
+(package "go-direx" "0.03" "Tree style source code viewer for Go language")
 
 (depends-on "direx")
 (depends-on "cl-lib")

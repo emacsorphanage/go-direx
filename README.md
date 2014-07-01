@@ -1,6 +1,7 @@
 # go-direx.el
 
 ## Introduction
+
 You can view go code in a tree style viewer with `direx.el`.
 
 
