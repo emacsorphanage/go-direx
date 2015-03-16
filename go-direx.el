@@ -1,11 +1,11 @@
 ;;; go-direx.el --- Tree style source code viewer for Go language
 
-;; Copyright (C) 2014 by Syohei YOSHIDA
+;; Copyright (C) 2015 by Syohei YOSHIDA
 
 ;; Author: Syohei YOSHIDA <syohex@gmail.com>
 ;; URL: https://github.com/syohex/emacs-go-direx
-;; Version: 0.03
-;; Package-Requires: ((direx "0.1alpha") (cl-lib "0.5"))
+;; Version: 0.04
+;; Package-Requires: ((direx "1.0.0") (cl-lib "0.5"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
