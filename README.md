@@ -1,4 +1,4 @@
-# go-direx.el
+# go-direx.el [![melpa badge][melpa-badge]][melpa-link] [![melpa stable badge][melpa-stable-badge]][melpa-stable-link]
 
 ## Introduction
 
@@ -10,7 +10,7 @@ You can view go code in a tree style viewer with `direx.el`.
 ![go-direx1](image/go-direx1.png)
 
 
-## Dependency
+## Requirements
 
 * [direx](https://github.com/m2ym/direx-el)
 * [gotags](https://github.com/jstemmer/gotags)
@@ -21,6 +21,16 @@ And you can install `gotags` by `go get` as below.
 ```
 % go get -u github.com/jstemmer/gotags
 ```
+
+
+## Installation
+
+`go-direx` is available on [MELPA](https://melpa.org/) and [MELPA stable](https://stable.melpa.org/)
+
+You can install `go-direx` with the following command.
+
+<kbd>M-x package-install [RET] go-direx [RET]</kbd>
+
 
 
 ## Setup
@@ -48,3 +58,8 @@ And you can install `gotags` by `go get` as below.
 (push '("^\*go-direx:" :regexp t :position right :width 0.4 :dedicated t :stick t)
       popwin:special-display-config)
 ```
+
+[melpa-link]: https://melpa.org/#/go-direx
+[melpa-stable-link]: https://stable.melpa.org/#/go-direx
+[melpa-badge]: https://melpa.org/packages/go-direx-badge.svg
+[melpa-stable-badge]: https://stable.melpa.org/packages/go-direx-badge.svg
